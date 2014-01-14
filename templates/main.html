@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>Web Crawler</title>
+
+</head>
+
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}main.css" />
+
+<body>
+<div class="header">URL Cartographer</div>
+
+
+<form action="/query/" method="post"> {% csrf_token %}
+<input type="text" name="url" />
+<input type="submit" value="Gather" />
+</form>
+
+<div id="dataContainer">
+{% if data %}
+ {% for url, number in quantity.items %}
+   <div><span>{{ url }}</span> <span>{{ number }}</span></div>
+ {% endfor %}
+{% else %}
+No query...
+{% endif %}
+</div>
+
+<div id="copyrightContainer">&#169;2014 <a href="http://caseyfalk.com">Casey Falk</a></div>
+</body>
+</html>
