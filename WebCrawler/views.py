@@ -15,7 +15,6 @@ class StripLinks(HTMLParser):
     if attr=="href":
      if val not in "//#": #Blacklist
       self.data.append(val)
-      print self.data
      break
 
 class URLMap(object):
@@ -23,6 +22,7 @@ class URLMap(object):
   self.root_url = root_url
   self.url_count = dict()
   self.edge_map = dict()
+  self.max_edges = 15
  #Mark that the URL was encountered.
  def count_url(self, url):
   try:
@@ -30,7 +30,7 @@ class URLMap(object):
   except:
    self.url_count[url]=1
  #Store the nodes that can be reached from a given URL.
- def mark_edge(start_url, end_url):
+ def mark_edge(self, start_url, end_url):
   try:
    self.edge_map[start_url].add(end_url)
   except:
@@ -38,34 +38,78 @@ class URLMap(object):
  #Make sure edges are not already added (ie: that a loop does not exist).
   #TRUE === A loop does NOT exist and the edge is valid.
   #FALSE === A loop has occurred as the edge already exists.
- def unique_edge(start_url, end_url):
+ def unique_edge(self, start_url, end_url):
   try:
    return end_url not in self.edge_map[start_url]
   except:
    return True
  #All-in-one Function to add a URL to the map.
- def add_url(start_url, end_url):
+ def add_url(self, start_url, end_url):
   try:
-   assert self.unique_edge(start_url, end_url)
    self.count_url(end_url)
    self.mark_edge(start_url, end_url)
   except Exception as e:
-   print e
+   print "ADD_URL ERROR: {}".format(e)
+ #Check that the size of the edge_map does not exceed max_edges.
+ def check_size(self):
+  return len(self.edge_map) <= self.max_edges
 
-def make_map_from_url(url, url_map):
+#Format the URL.
+def parse_link(url):
+ #Remove the "index.html" from the web address. (TODO: Is this inaccurate?) 
+ url = url.replace("index.html","")
+
+ #Remove double-slashes that may occur.
+ url = url.replace("//","/")
+ url = url.replace(":/","://") #Needed for the http:// or https:// header.
+
+ #Append a "/" on the end of the URL if it is missing.
+ if (url[-4:] in {".com",".gov",".org",".net",".edu"} or 
+     url[-3:] in {".io", ".nr", ".uk", ".us"}):
+  url = url+"/"
+ #Remove GET request information that may pop up.
+ if "?" in url:
+  url = url[:url.index("?")]
+  
+ return url
+
+#Get the main domain from the URL.
+def get_domain(url):
+ #Clean up the url.
+ url = parse_link(url)
+
+ #Take off any trailing bits after the third forward slash.
+ #eg: "http://example.com/..."
+ url_parts = url.split("/")
+ domain = "{}//{}/".format(url_parts[0],url_parts[2])
+ return domain
+
+def make_map_from_url(url, url_map, domain):
  try:
-  if len(url_map.edge_map) < 100:
-   response = requests.get(url)
-   link_stripper = StripLinks()
-   links = link_stripper.feed(response.text)
-   print links.data
-   for link in links.data:
+  #Get the response from the URL.
+  url = parse_link(url)
+  response = requests.get(url)
+
+  #Strip out links from the HTTP response.
+  links = StripLinks()
+  links.feed(response.text)
+  for link in links.data:
+   #Add the HTTP/HTTPS head (and domain) if it is missing.
+   if not (link[:7]=="http://" or link[:8]=="https://"):
+    link = "{}{}".format(domain, link)
+   else:
+    domain = get_domain(link)
+   link = parse_link(link)
+
+   #Add the link to the map.
+   if url_map.unique_edge(url, link) and url_map.check_size():
     url_map.add_url(url, link)
-    make_map_from_url(link, url_map)
-  else:
-   print "Finished making map!"
+    make_map_from_url(link, url_map, domain)
  except Exception as e:
+  url_map.add_url(url, "DEADLINK")
+  print "_________________"
   print e
+  print "_____________"
 
 def home(request):
  if request.method=="POST":
@@ -73,7 +117,7 @@ def home(request):
 
   #Construct the Map.
   Map = URLMap(root_url)
-  make_map_from_url(root_url, Map)
+  make_map_from_url(root_url, Map, get_domain(root_url))
  
   return render(request, "main.html", {
    "url":Map.root_url,
