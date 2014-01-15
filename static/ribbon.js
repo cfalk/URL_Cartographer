@@ -1,8 +1,9 @@
 //############   Ribbons:   #############################################
 window.showRibbon = function(message, color, frame, timeout) {
- //Assume that the ribbon should time out.
+ //Assume that the ribbon should time out if not specified.
  timeout = timeout !== undefined ? timeout : true
- //Remove any extra
+
+ //Remove any ribbons that currently exist.
  $(".ribbonMessage").remove();
 
  $(frame).append(
@@ -16,7 +17,7 @@ window.showRibbon = function(message, color, frame, timeout) {
     $(".ribbonMessage").remove();
    });
 
-  },500+15*message.length);
+  },500+18*message.length);
  }
 }
 

@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}main.css" />
 
 <body>
-<div class="header">
+<div class="header unselectable">
  <div class="innerHeader">
  <img id="earthLogo" src="{{STATIC_URL}}earth_logo.png">
  <span>URL</span><div>Cartographer</div>
@@ -18,19 +18,36 @@
 
 
 <form action="/query/" method="post"> {% csrf_token %}
-<input type="text" name="url" id="formText"/>
-<input type="submit" value="Gather" id="formSubmit"/>
+<input title="Pick a <b>URL</b> to map." type="text" name="url" id="formText" class="formField"/>
+<select title="How many <b>levels</b> deeper should be explored?" type="select" name="depth" id="formText" class="formField"/>
+ {% for i in depth_range %}
+ <option val="{{i}}">{{i}}</option>
+ {% endfor %}
+</select>
+<input type="submit" value="Gather" id="formSubmit" class="formField"/>
+<img src="{{STATIC_URL}}formLoadingWheel.gif" id="formLoadingWheel" class="unselectable">
+<div id="formTitleContainer"></div>
 </form>
 
 <div id="dataContainer">
 {% if url %}
- <div>Map from <a href="{{url}}">"{{url}}"</a></div>
+ <div>Map of <a href="{{url}}">"{{url}}"</a> (depth: {{depth}})</div>
+ <div>Took {{time|floatformat:3}} seconds.</div>
 
  <div class="dataHeader"> Occurrences of URLs:</div>
+ Found {{total_urls}} URLs.
+
  <table>
-  <tr><td>Number</td> <td>URL</td></tr>
+  <colgroup>
+   <col class="numberCol">
+   <col class="urlCol">
+  </colgroup>
+  <tr class="headerRow"><td>Number</td> <td>URL</td></tr>
   {% for url, number in quantity.items %}
-   <tr><td class="number">{{ number }}</td> <td>{{ url }}</td></tr>
+   <tr>
+    <td class="numberCell">{{ number }}</td>
+    <td class="urlCell">{{ url }}</td>
+   </tr>
   {% endfor %}
  </table>
 
@@ -49,7 +66,7 @@
 {% endif %}
 </div>
 
-<div id="copyrightContainer">&#169;2014 <a href="http://caseyfalk.com">Casey Falk</a></div>
+<div id="copyrightContainer" class="unselectable">&#169;2014 <a href="http://caseyfalk.com">Casey Falk</a></div>
 </body>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.js"></script>
