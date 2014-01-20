@@ -16,6 +16,11 @@ table {
  margin: 0 auto;
 }
 
+.separatedText {
+ font-size: 20px;
+ margin:20px;
+}
+
 .headerRow {
  color:red;
 }
@@ -107,8 +112,6 @@ a:hover {
  -moz-user-select:none;
 }
 
-/* # # # # # # # # # # */
-/* TODO: Needs to be finished. */
 .dataHeader{
  font-size:24px;
  font-weight:bold;
@@ -131,8 +134,6 @@ a:hover {
  font-weight:bold;
  margin-right:10px;
 }
-
-/* # # # # # # # # # # */
 
 .ribbonMessage {
  z-index:100;

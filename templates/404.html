@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>Web Crawler</title>
+
+</head>
+
+<link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}favicon.ico">
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}main.css" />
+
+<body>
+<div class="header unselectable">
+ <div class="innerHeader">
+ <img id="earthLogo" src="{{STATIC_URL}}earth_logo.png">
+ <span>URL</span><div>Cartographer</div>
+ </div>
+ <div class="headerMask"> 
+ </div>
+</div>
+<div class="separatedText">
+404: Huh... We couldn't find that page.
+</div>
+<div id="copyrightContainer" class="unselectable">&#169;2014 <a href="http://caseyfalk.com">Casey Falk</a></div>
+</body>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.js"></script>
+<script src="{{ STATIC_URL }}ribbon.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}main.js" type="text/javascript"></script>
+
+</html>

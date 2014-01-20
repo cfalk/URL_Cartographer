@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'ej@%+&+53q@n76s2h12ovkmt%2dw#7jepl@qapjd97fws^u+w+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-TEMPLATE_DEBUG = True
+DEBUG = False
+TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ["caseyfalk.com", "24.160.46.173"]
+ALLOWED_HOSTS = ["caseyfalk.com","cartographer.caseyfalk.com", "24.160.46.173", "127.0.0.1"]
 
 
 # Application definition
@@ -50,16 +50,6 @@ ROOT_URLCONF = 'WebCrawler.urls'
 
 WSGI_APPLICATION = 'WebCrawler.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
